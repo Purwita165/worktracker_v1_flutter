@@ -14,6 +14,35 @@ class _TodoPageState extends State<TodoPage> {
   // =====================================================
   static const List<String> priorities = ['H', 'M', 'L'];
 
+  static const Map<String, String> priorityLabels = {
+    'H': 'High',
+    'M': 'Medium',
+    'L': 'Low',
+  };
+
+  String _formatDateId(DateTime date) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des',
+    ];
+
+    final d = date.day.toString().padLeft(2, '0');
+    final m = months[date.month - 1];
+    final y = date.year;
+
+    return '$d $m $y'; // contoh: 13 Jan 2026
+  }
+
   // =====================================================
   // STATE — HB-ExeCon v1
   // =====================================================
@@ -31,14 +60,10 @@ class _TodoPageState extends State<TodoPage> {
     return value == null || value.isEmpty ? '$label (optional)' : label;
   }
 
+  final String currentUserId = 'local-user';
+
   Widget _metaText(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 12,
-        color: Colors.grey,
-      ),
-    );
+    return Text(text, style: const TextStyle(fontSize: 12, color: Colors.grey));
   }
 
   Widget _buildTodoMetadataRow(Todo todo) {
@@ -49,19 +74,27 @@ class _TodoPageState extends State<TodoPage> {
 
     List<Widget> items = [];
 
-    if (todo.soNumber != null) {
+    if (todo.soNumber != null && todo.soNumber!.isNotEmpty) {
       items.add(Text('SO: ${todo.soNumber}', style: textStyle));
     }
 
-    if (todo.ref != null) {
+    if (todo.ref != null && todo.ref!.isNotEmpty) {
       items.add(Text('Ref: ${todo.ref}', style: textStyle));
     }
 
-    items.add(Text('Pr: ${todo.priority}', style: textStyle));
+    final prLabel = priorityLabels[todo.priority] ?? todo.priority;
+    items.add(Text('Pr: $prLabel', style: textStyle));
 
     if (todo.dueDate != null) {
-      final d = todo.dueDate!.toIso8601String().substring(0, 10);
-      items.add(_metaText('Due: $d'));
+      final d = _formatDateId(todo.dueDate!);
+      items.add(Text('Due: $d', style: textStyle));
+    }
+
+    // =====================
+    // PROGRESS (INI YANG HILANG)
+    // =====================
+    if (todo.progress != null) {
+      items.add(Text('Prog: ${todo.progress}%', style: textStyle));
     }
 
     return Wrap(spacing: 12, runSpacing: 4, children: items);
@@ -110,6 +143,9 @@ class _TodoPageState extends State<TodoPage> {
     setState(() {
       todos.add(
         Todo(
+          userId: currentUserId,
+          taskDate: DateTime.now(),
+
           description: descController.text.trim(),
           soNumber: soNumber,
           ref: refController.text.trim().isEmpty
@@ -204,9 +240,9 @@ class _TodoPageState extends State<TodoPage> {
                       value: localPriority,
                       decoration: const InputDecoration(labelText: 'Priority'),
                       items: const [
-                        DropdownMenuItem(value: 'H', child: Text('H')),
-                        DropdownMenuItem(value: 'M', child: Text('M')),
-                        DropdownMenuItem(value: 'L', child: Text('L')),
+                        DropdownMenuItem(value: 'H', child: Text('High')),
+                        DropdownMenuItem(value: 'M', child: Text('Medium')),
+                        DropdownMenuItem(value: 'L', child: Text('Low')),
                       ],
                       onChanged: (v) => setLocal(() => localPriority = v),
                     ),
@@ -242,13 +278,30 @@ class _TodoPageState extends State<TodoPage> {
                     // =====================
                     // PROGRESS (OPTIONAL)
                     // =====================
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Progress % (optional)',
-                      ),
-                      onChanged: (v) =>
-                          setLocal(() => localProgress = int.tryParse(v)),
+                    // =====================
+                    // PROGRESS (OPTIONAL)
+                    // =====================
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Progress % (optional)'),
+                        Slider(
+                          value: (localProgress ?? 0).toDouble(),
+                          min: 0,
+                          max: 100,
+                          divisions: 20,
+                          label: '${localProgress ?? 0}%',
+                          onChanged: (v) {
+                            setLocal(() {
+                              localProgress = v.toInt(); // ✅ INI KUNCI
+                            });
+                          },
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text('${localProgress ?? 0}%'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -275,6 +328,7 @@ class _TodoPageState extends State<TodoPage> {
                     }
 
                     // COMMIT KE STATE PAGE (SATU ARAH)
+
                     priority = localPriority;
                     dueDate = localDueDate;
                     progress = localProgress;
@@ -282,6 +336,10 @@ class _TodoPageState extends State<TodoPage> {
                     soNumber = soController.text.trim().isEmpty
                         ? null
                         : soController.text.trim();
+
+                    ref = refController.text.trim().isEmpty
+                        ? null
+                        : refController.text.trim();
 
                     addTodo();
                     Navigator.pop(context);
