@@ -628,11 +628,47 @@ DUE DATE FILTER DIALOG
     final completedCount = todos.where((t) => t.isDone).length;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("WorkTracker")),
+      appBar: null,
 
       body: Column(
         children: [
-          const SizedBox(height: 6),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF1F3A5F), Color(0xFF4B79A1)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "WorkTracker",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                Text(
+                  "Plan • Track • Execute",
+                  style: TextStyle(
+                    fontSize: 14,
+                    letterSpacing: 1,
+                    color: Colors.white70,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
 
           /*
           TODAY DATE
