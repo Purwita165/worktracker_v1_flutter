@@ -745,7 +745,7 @@ DUE DATE FILTER DIALOG
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF1F3A5F), Color(0xFF4B79A1)],
@@ -907,27 +907,62 @@ TODAY'S FOCUS SECTION
 Menampilkan task yang dipilih sebagai fokus hari ini.
 */
           if (focusTodos.isNotEmpty) ...[
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Text(
-                "⭐ TODAY'S FOCUS",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.orange.withOpacity(0.25)),
+              ),
+
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(Icons.star, size: 16, color: Colors.orange),
+                      SizedBox(width: 6),
+                      Text(
+                        "TODAY'S FOCUS",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  ...focusTodos.map((todo) {
+                    return ListTile(
+                      dense: true,
+                      visualDensity: VisualDensity.compact,
+
+                      leading: const Icon(
+                        Icons.star,
+                        size: 14,
+                        color: Colors.orange,
+                      ),
+
+                      title: Text(
+                        todo.description,
+                        style: const TextStyle(fontWeight:FontWeight.bold),
+                      ),
+
+                      onTap: () {
+                        openTaskDialog(todo: todo);
+                      },
+                    );
+                  }),
+                ],
               ),
             ),
-
-            ...focusTodos.map((todo) {
-              return ListTile(
-                leading: const Icon(Icons.star, color: Colors.orange),
-                title: Text(
-                  todo.description,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  openTaskDialog(todo: todo);
-                },
-              );
-            }),
           ],
+
+          Divider(height: 24, thickness: 1, color: Colors.grey.shade300),
 
           /*
           TASK LIST
@@ -972,7 +1007,7 @@ Menampilkan task yang dipilih sebagai fokus hari ini.
                       return Card(
                         elevation: 3,
                         margin: const EdgeInsets.symmetric(
-                          vertical: 6,
+                          vertical: 4,
                           horizontal: 4,
                         ),
                         shape: RoundedRectangleBorder(
@@ -1013,16 +1048,16 @@ Menampilkan task yang dipilih sebagai fokus hari ini.
                                     style: const TextStyle(fontSize: 13),
                                   )
                                 else
-                                  Row(
+                                  Wrap(
+                                    spacing: 16,
+                                    runSpacing: 4,
                                     children: [
                                       Text("WorkID: ${todo.workId}"),
-                                      const SizedBox(width: 16),
 
                                       Text("Ref: ${todo.ref}"),
-                                      const SizedBox(width: 16),
 
                                       Text(
-                                        "Priority: ${priorityLabels[todo.priority] ?? "-"}",
+                                        "Priority: ${priorityLabels[todo.priority]}",
                                         style: TextStyle(
                                           color: getPriorityColor(
                                             todo.priority ?? "M",
@@ -1030,10 +1065,8 @@ Menampilkan task yang dipilih sebagai fokus hari ini.
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
 
                                       Text("Progress: ${todo.progress}%"),
-                                      const SizedBox(width: 16),
 
                                       Text("Due: ${formatDate(todo.dueDate)}"),
                                     ],
