@@ -1,10 +1,23 @@
-WorkTracker
+# WorkTracker
+Plan . rack . Execute
 
 WorkTracker is a lightweight task management application built with Flutter and SQLite.
-
 The app is designed to help users plan, track, and execute tasks with progress tracking, priority levels, and simple task management.
 
-Features
+## Platform
+
+- Android
+- Windows (Flutter desktop)
+
+## Project Structure
+
+lib/
+ ├── database/      # SQLite database helper
+ ├── models/        # Task data models
+ ├── pages/         # UI pages
+ └── main.dart      # App entry point
+
+## Features
 
 - Create and manage tasks
 - Track task progress
@@ -13,7 +26,7 @@ Features
 - Store data locally using SQLite
 - Clean and simple productivity interface
 
-Technology Stack
+## Technology Stack
 
 - Flutter
 - Dart
