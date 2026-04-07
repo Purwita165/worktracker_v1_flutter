@@ -1219,79 +1219,80 @@ Menampilkan task yang dipilih sebagai fokus hari ini.
 
                   const SizedBox(height: 8),
 
-                  ...focusTodos.map((todo) {
-                    final metaText =
-                        "WorkID: ${todo.workId}  "
-                        "Ref: ${todo.ref}  "
-                        "Priority: ${priorityLabels[todo.priority]}  "
-                        "Progress: ${todo.progress}%  "
-                        "Start: ${formatDate(todo.startDate)}  "
-                        "Due: ${formatDate(todo.dueDate)}";
+                  SizedBox(
+                    height: 180, // bisa kamu adjust
+                    child: ListView(
+                      children: focusTodos.map((todo) {
+                        final metaText =
+                            "WorkID: ${todo.workId}  "
+                            "Ref: ${todo.ref}  "
+                            "Priority: ${priorityLabels[todo.priority]}  "
+                            "Progress: ${todo.progress}%  "
+                            "Start: ${formatDate(todo.startDate)}  "
+                            "Due: ${formatDate(todo.dueDate)}";
 
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Checkbox(
-                              value: todo.isDone,
-                              onChanged: (_) => toggleTodo(todo),
-                            ),
-
-                            GestureDetector(
-                              onTap: () => toggleFocus(todo),
-                              child: Icon(
-                                todayFocusIds.contains(todo.id)
-                                    ? Icons.star
-                                    : Icons.star_border,
-                                size: 18,
-                                color: Colors.orange,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(width: 10),
-
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                todo.description,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                            Column(
+                              children: [
+                                Checkbox(
+                                  value: todo.isDone,
+                                  onChanged: (_) => toggleTodo(todo),
                                 ),
-                              ),
-
-                              const SizedBox(height: 4),
-
-                              Text(metaText),
-                            ],
-                          ),
-                        ),
-
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, size: 18),
-                              onPressed: () => openTaskDialog(todo),
+                                GestureDetector(
+                                  onTap: () => toggleFocus(todo),
+                                  child: Icon(
+                                    todayFocusIds.contains(todo.id)
+                                        ? Icons.star
+                                        : Icons.star_border,
+                                    size: 18,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ],
                             ),
 
-                            IconButton(
-                              icon: const Icon(
-                                Icons.delete,
-                                size: 18,
-                                color: Colors.red,
+                            const SizedBox(width: 10),
+
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    todo.description,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(metaText),
+                                ],
                               ),
-                              onPressed: () => confirmDelete(todo),
+                            ),
+
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit, size: 18),
+                                  onPressed: () => openTaskDialog(todo),
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    size: 18,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () => confirmDelete(todo),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                      ],
-                    );
-                  }),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ],
               ),
             ),
