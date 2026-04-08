@@ -150,13 +150,28 @@ Tidak disimpan ke database (V1).
   Future<void> loadTodos() async {
     final data = await dbHelper.getTodos();
 
+    // 🔥 Cache waktu sekarang (hindari DateTime.now() berkali-kali)
+    final now = DateTime.now();
+
+    // 🔥 Precompute diff (cache)
+    final Map<Todo, int> diffCache = {};
+
+    for (var t in data) {
+      if (t.startDate != null) {
+        diffCache[t] = t.startDate!.difference(now).inDays;
+      } else {
+        diffCache[t] = 9999; // default kalau null
+      }
+    }
+
+    // 🔥 Sorting pakai cache (cepat)
+    data.sort((a, b) {
+      return diffCache[a]!.compareTo(diffCache[b]!);
+    });
+
+    // 🔥 Update UI
     setState(() {
       todos = data;
-
-      // 🔥 SORT pakai getDiff()
-      todos.sort((a, b) {
-        return getDiff(a.startDate).compareTo(getDiff(b.startDate));
-      });
     });
   }
 
