@@ -163,7 +163,6 @@ Tidak disimpan ke database (V1).
         diffCache[t] = 9999; // default kalau null
       }
     }
-
     // 🔥 Sorting pakai cache (cepat)
     data.sort((a, b) {
       return diffCache[a]!.compareTo(diffCache[b]!);
@@ -173,8 +172,10 @@ Tidak disimpan ke database (V1).
     setState(() {
       todos = data;
     });
+    await
+    TodoLogic().generateReminders(data);
   }
-
+  
   int getDiff(DateTime? date) {
     if (date == null) return 9999; // biar taruh di bawah
     final now = DateTime.now();
