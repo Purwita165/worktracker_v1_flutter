@@ -27,6 +27,7 @@ import '../database/db_helper.dart';
 import 'package:intl/intl.dart';
 import '../widgets/todo_card.dart';
 import '../services/todo_logic.dart';
+import 'package:worktracker_v1/services/notification_service.dart';
 
 enum FilterType { all, active, completed, priority, due }
 
@@ -128,18 +129,25 @@ Tidak disimpan ke database (V1).
   ============================================================
   */
 
-  @override
-  void initState() {
-    super.initState();
+@override
+void initState() {
+  super.initState();
 
-    loadTodos();
+  print("INIT STATE JALAN");
 
-    quickController.addListener(() {
-      setState(() {
-        isTypingQuick = quickController.text.isNotEmpty;
-      });
+  loadTodos();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    print("POST FRAME TERPANGGIL");
+    NotificationService().testNow();
+  });
+
+  quickController.addListener(() {
+    setState(() {
+      isTypingQuick = quickController.text.isNotEmpty;
     });
-  }
+  });
+}
 
   /*
   ============================================================
